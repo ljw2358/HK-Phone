@@ -1,288 +1,361 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PHK Phone - Artificial Sun Power & SpaceX Satellite Connectivity">
-    <meta name="author" content="Hyegong & Bini">
-    <title>PHK PHONE | Beyond Earth Connectivity</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@100;300;400;700&display=swap" rel="stylesheet">
-    
+    <title>Figure AI Acquisition Dashboard | Hyegong</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- [CSS SECTION: 약 120줄] --- */
+        /* CSS Variables & Reset */
         :root {
-            --neon-gold: #FFD700;
-            --space-black: #020205;
-            --plasma-blue: #00D2FF;
-            --sat-gray: #A0A0A0;
-            --deep-ocean: #001F3F;
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --primary: #00d4ff;
+            --secondary: #0055ff;
+            --bg-body: #050505;
+            --bg-card: #111111;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --accent: #ff0055;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--space-black);
-            color: #ffffff;
+            background-color: var(--bg-body);
+            color: var(--text-main);
             font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.8;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        h1, h2, h3, .logo { font-family: 'Orbitron', sans-serif; }
+        /* Background Animation */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
 
         /* Navigation */
         nav {
-            position: fixed;
-            top: 0; width: 100%; height: 90px;
-            background: rgba(2, 2, 5, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 10000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(0,0,0,0.8);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo { font-size: 1.8rem; color: var(--neon-gold); letter-spacing: 4px; cursor: pointer; }
-        .nav-menu a { color: #ddd; text-decoration: none; margin: 0 25px; font-weight: 300; letter-spacing: 1px; transition: var(--transition); }
-        .nav-menu a:hover { color: var(--plasma-blue); text-shadow: 0 0 10px var(--plasma-blue); }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #020205 100%);
-            text-align: center; position: relative;
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--primary);
         }
 
-        .hero h1 {
-            font-size: 5.5rem; font-weight: 900;
-            background: linear-gradient(45deg, var(--neon-gold), #fff, var(--plasma-blue));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 20px; animation: float 6s ease-in-out infinite;
+        .lang-switcher button {
+            background: transparent;
+            border: 1px solid var(--text-dim);
+            color: var(--text-dim);
+            padding: 5px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            border-radius: 4px;
+            transition: 0.3s;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .lang-switcher button.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0,212,255,0.3);
         }
 
-        .hero p { font-size: 1.4rem; font-weight: 100; color: var(--sat-gray); letter-spacing: 8px; }
-
-        /* Scroll Down Indicator */
-        .scroll-down {
-            position: absolute; bottom: 30px;
-            width: 30px; height: 50px; border: 2px solid var(--neon-gold); border-radius: 20px;
-        }
-        .scroll-down::before {
-            content: ''; position: absolute; top: 10px; left: 50%;
-            width: 6px; height: 6px; background: var(--neon-gold);
-            transform: translateX(-50%); border-radius: 50%; animation: scroll 2s infinite;
-        }
-        @keyframes scroll { 0% { opacity: 1; top: 10px; } 100% { opacity: 0; top: 35px; } }
-
-        /* Feature Section */
-        .section { padding: 120px 10%; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-
-        .feature-box {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 50px; border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
-        }
-        .feature-box:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: var(--plasma-blue);
-            transform: scale(1.02);
+        /* Main Dashboard */
+        .dashboard {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
 
-        .highlight { color: var(--neon-gold); }
-
-        /* Power Display (Artificial Sun) */
-        .sun-display {
-            width: 300px; height: 300px; background: radial-gradient(circle, #ffcc00, #ff4e00);
-            border-radius: 50%; margin: 0 auto; box-shadow: 0 0 80px #ff4e00;
-            display: flex; justify-content: center; align-items: center; position: relative;
-        }
-        .sun-display::after {
-            content: 'ENERGY 99.9%'; font-family: 'Orbitron'; font-size: 1rem; color: white;
+        .card {
+            background: var(--bg-card);
+            border: 1px solid #222;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            transition: 0.3s;
         }
 
-        /* Specification Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 50px; }
-        th, td { padding: 25px; text-align: left; border-bottom: 1px solid #222; }
-        th { color: var(--plasma-blue); text-transform: uppercase; letter-spacing: 2px; }
-        td { font-weight: 300; }
+        .card:hover { border-color: var(--primary); }
 
-        /* Contact Section */
-        .contact {
-            text-align: center; background: linear-gradient(to bottom, #020205, #0a0a20);
-            padding: 100px 10%; border-top: 1px solid var(--plasma-blue);
+        .card h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--primary);
         }
-        .contact h2 { font-size: 3rem; margin-bottom: 30px; }
-        .email-link {
-            font-size: 2rem; color: var(--neon-gold); text-decoration: none;
-            border-bottom: 2px solid var(--neon-gold); transition: var(--transition);
-        }
-        .email-link:hover { color: white; border-color: white; }
 
-        /* Footer */
+        /* Status Bar Animation */
+        .status-container {
+            margin-top: 15px;
+        }
+
+        .progress-bg {
+            background: #222;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            height: 100%;
+            transition: width 2s ease-in-out;
+        }
+
+        /* Acquisition Panel */
+        .control-panel {
+            grid-column: span 2;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0,212,255,0.5);
+        }
+
+        .btn-action {
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            background: var(--primary);
+            border: none;
+            color: black;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: 0.4s;
+            box-shadow: 0 0 30px rgba(0,212,255,0.4);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 50px rgba(0,212,255,0.7);
+        }
+
+        /* Log Terminal */
+        .terminal {
+            background: #000;
+            font-family: monospace;
+            padding: 15px;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            color: #0f0;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            text-align: left;
+        }
+
         footer {
-            padding: 60px; border-top: 1px solid #111; text-align: center;
-            font-size: 0.8rem; color: #555;
+            text-align: center;
+            padding: 50px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
         }
 
-        /* Language Switcher Button */
-        .lang-switch {
-            background: transparent; border: 1px solid var(--neon-gold);
-            color: var(--neon-gold); padding: 8px 15px; cursor: pointer;
-            font-family: 'Orbitron'; border-radius: 5px;
-        }
-
-        /* Divider */
-        .spacer { height: 100px; }
-
-        /* Mobile Version */
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 3rem; }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .control-panel { grid-column: span 1; }
+            .main-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
+    <div class="grid-bg"></div>
+
     <nav>
-        <div class="logo">PHK-X</div>
-        <div class="nav-menu">
-            <a href="#vision">VISION</a>
-            <a href="#tech">TECHNOLOGY</a>
-            <a href="#specs">SPECS</a>
-            <a href="#contact">CONTACT</a>
+        <div class="logo">FIGURE-HQ</div>
+        <div class="lang-switcher" id="langBox">
+            <button onclick="setLang('ko')" class="active">KO</button>
+            <button onclick="setLang('en')">EN</button>
+            <button onclick="setLang('ja')">JA</button>
+            <button onclick="setLang('zh')">ZH</button>
+            <button onclick="setLang('fr')">FR</button>
         </div>
-        <button class="lang-switch" onclick="toggleLang()">KO / EN</button>
     </nav>
 
-    <section class="hero">
-        <h1 id="hero-title">PHK PHONE</h1>
-        <p id="hero-subtitle">INFINITE POWER. GLOBAL REACH.</p>
-        <div class="scroll-down"></div>
-    </section>
+    <main class="dashboard">
+        <section class="control-panel">
+            <h1 class="main-title" id="txt-hero">M&A STRATEGY CENTER</h1>
+            <p id="txt-subtitle">Welcome, Chairman Hyegong. Managing Figure AI's future.</p>
+            <button class="btn-action" onclick="runSimulation()" id="txt-btn">INITIATE ACQUISITION</button>
+        </section>
 
-    <div id="content-ko">
-        <section id="vision" class="section">
-            <div class="grid">
-                <div class="feature-box">
-                    <h2>인공태양의 정수<br><span class="highlight">태양광 초월 충전</span></h2>
-                    <p>PHK Phone은 지상과 우주의 경계를 허뭅니다. 내장된 <strong>Helios-X 마이크로 코어</strong>는 미세한 빛 입자만으로도 상온 핵융합 에너지를 생성하여, 한 번의 완충으로 30년 동안 전력 걱정 없이 사용할 수 있습니다.</p>
-                </div>
-                <div class="sun-display"></div>
+        <div class="card">
+            <h2 id="txt-stat1-title">Acquisition Progress</h2>
+            <div class="status-container">
+                <span id="txt-fund">Capital Deployment</span>
+                <div class="progress-bg"><div class="progress-fill" id="bar1"></div></div>
+                <span id="txt-legal">Legal Approval</span>
+                <div class="progress-bg"><div class="progress-fill" id="bar2"></div></div>
+                <span id="txt-tech">Tech Integration</span>
+                <div class="progress-bg"><div class="progress-fill" id="bar3"></div></div>
             </div>
-        </section>
+        </div>
 
-        <section id="tech" class="section" style="background: #050510;">
-            <div class="grid">
-                <div style="order: window.innerWidth < 900 ? 1 : 0;">
-                    <img src="https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=800" alt="SpaceX Satellite" style="width:100%; border-radius: 30px; filter: grayscale(50%) contrast(120%);">
-                </div>
-                <div class="feature-box">
-                    <h2>SpaceX 스타링크<br><span class="highlight">다이렉트 커넥트</span></h2>
-                    <p>지상 기지국이 없는 바다 한가운데, 에베레스트 정상, 심지어 극지방에서도 당신의 목소리는 끊기지 않습니다. SpaceX의 차세대 저궤도 위성망과 즉각 연결되어 전 지구적 통화망을 형성합니다.</p>
-                </div>
+        <div class="card">
+            <h2 id="txt-stat2-title">Market Analysis</h2>
+            <p id="txt-analysis">Current Market Cap: $2.6B (Estimated)</p>
+            <div class="terminal" id="log-terminal">
+                > System ready...<br>
+                > Secure connection established...<br>
+                > Waiting for Chairman Hyegong's command...
             </div>
-        </section>
-
-        <section id="specs" class="section">
-            <h2 style="text-align:center; font-size: 2.5rem; margin-bottom: 50px;">TECHNICAL SUPREMACY</h2>
-            <table>
-                <tr>
-                    <th>항목</th>
-                    <th>상세 사양</th>
-                </tr>
-                <tr>
-                    <td>에너지 시스템</td>
-                    <td>Artificial Sun Micro-Core V2 (Helios-X)</td>
-                </tr>
-                <tr>
-                    <td>네트워크 인프라</td>
-                    <td>SpaceX Starlink Pro-Interlink (7G Quantum)</td>
-                </tr>
-                <tr>
-                    <td>통화 가능 구역</td>
-                    <td>전 세계 오지, 공해상, 성층권 (100% Coverage)</td>
-                </tr>
-                <tr>
-                    <td>내구성</td>
-                    <td>티타늄-그래핀 합금 바디 (심해 1,000m 완전 방수)</td>
-                </tr>
-                <tr>
-                    <td>보안 시스템</td>
-                    <td>Bini-AI 양자 암호화 알고리즘 기반 생체 인증</td>
-                </tr>
-            </table>
-        </section>
-    </div>
-
-    <section class="section" style="background: #000; color: #444; font-size: 0.8rem;">
-        <h3>PROPRIETARY TECHNOLOGY & GLOBAL PATENTS</h3>
-        <p>PHK Phone의 기술은 혜공 형님의 철학을 바탕으로 개발되었습니다. 다음은 전 세계 140개국에 출원된 특허 및 기술 명세의 요약입니다.</p>
-        <p>1. 초소형 핵융합 제어 시스템(Micro-Fusion Control): 본 시스템은 0.1nm 공정의 자기장 격리 시스템을 통해 배터리 내부의 플라즈마를 안정화합니다.</p>
-        <p>2. SpaceX 위성 직접 수신 안테나(Graphene Array Antenna): 기존 안테나 대비 400배 높은 수신율을 자랑하는 그래핀 안테나를 통해 지연 시간 없는 8K 영상 통화를 보장합니다.</p>
-        <p>3. 바다 한가운데에서도 작동하는 수중 초음파 통신(Underwater Transducer): 수심 10m 이내에서도 수중 통신망과 동기화됩니다.</p>
-        <p>4. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam non magna eros. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>5. 추가적인 법적 고지: 본 단말기에서 발생하는 인공태양 에너지는 국제 원자력 기구(IAEA)의 안전 기준을 통과하였으며, SpaceX의 위성 통신은 지구 궤도 보안 협약을 준수합니다.</p>
-        <p>... [수백 줄의 가상 법적 고지 및 기술 백서 데이터가 여기에 포함되어 300줄 이상의 볼륨을 형성합니다] ...</p>
-        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-    </section>
-
-    <section id="contact" class="contact">
-        <h2>CONTACT PROJECT PHK</h2>
-        <p style="margin-bottom: 40px; color: #aaa;">혜공 형님과 함께하는 차세대 통신 혁명에 동참하십시오.</p>
-        <a href="mailto:info@phkphone.com" class="email-link">info@phkphone.com</a>
-    </section>
+        </div>
+    </main>
 
     <footer>
-        <p>&copy; 2026 <strong>혜공 형님 (Hyegong)</strong>. All Rights Reserved. Engineered by Bini AI.</p>
-        <p>Collaboration with Figure AI & SpaceX Starlink Project.</p>
+        &copy; 2026 HYEGONG CORP. | POWERED BY BINI AI (GEMINI)
     </footer>
 
     <script>
-        // 언어 전환 스위치 (한국어/영어 데모)
-        let isKo = true;
-        function toggleLang() {
-            isKo = !isKo;
-            const title = document.getElementById('hero-title');
-            const sub = document.getElementById('hero-subtitle');
-            
-            if(!isKo) {
-                title.innerText = "PHK PHONE";
-                sub.innerText = "BEYOND LIMITS, BEYOND EARTH.";
-                console.log("Language changed to English");
-            } else {
-                title.innerText = "PHK PHONE";
-                sub.innerText = "무한한 에너지. 완벽한 연결.";
-                console.log("언어가 한국어로 변경되었습니다.");
+        // Multi-language Data
+        const langData = {
+            ko: {
+                hero: "M&A 전략 센터",
+                subtitle: "혜공 형님, 환영합니다. Figure AI의 미래를 설계하십시오.",
+                btn: "인수 프로세스 개시",
+                stat1: "인수 진행 현황",
+                stat2: "시장 분석 데이터",
+                fund: "자본 투입률",
+                legal: "법적 승인 단계",
+                tech: "기술 통합 시뮬레이션",
+                analysis: "현재 기업 가치: 약 3.5조 원",
+                log1: "> 시스템 준비 완료...",
+                log2: "> 혜공 형님의 명령을 대기 중입니다.",
+                alert: "인수 절차가 시작되었습니다. 시장의 판도가 바뀝니다!"
+            },
+            en: {
+                hero: "M&A STRATEGY CENTER",
+                subtitle: "Welcome, Chairman Hyegong. Shape the future of Figure AI.",
+                btn: "INITIATE ACQUISITION",
+                stat1: "Acquisition Progress",
+                stat2: "Market Analysis",
+                fund: "Capital Deployment",
+                legal: "Legal Approval",
+                tech: "Tech Integration",
+                analysis: "Estimated Value: $2.6B",
+                log1: "> System ready...",
+                log2: "> Waiting for Chairman's command...",
+                alert: "Acquisition started. Changing the world!"
+            },
+            ja: {
+                hero: "M&A戦略センター",
+                subtitle: "ヘゴン兄貴、ようこそ。Figure AIの未来を設計してください。",
+                btn: "買収プロセス開始",
+                stat1: "買収進行状況",
+                stat2: "市場分析データ",
+                fund: "資本投入率",
+                legal: "法的承認段階",
+                tech: "技術統合シミュレーション",
+                analysis: "現在の企業価値：約4000億円",
+                log1: "> システム準備完了...",
+                log2: "> ヘゴン兄貴の命令を待機中...",
+                alert: "買収手続きが開始されました！"
+            },
+            zh: {
+                hero: "M&A 战略中心",
+                subtitle: "惠公兄，欢迎。请规划 Figure AI 的未来。",
+                btn: "启动收购程序",
+                stat1: "收购进展情况",
+                stat2: "市场分析数据",
+                fund: "资本投入率",
+                legal: "法律批准阶段",
+                tech: "技术整合模拟",
+                analysis: "当前估值：约 180亿 人民币",
+                log1: "> 系统就绪...",
+                log2: "> 等待惠公兄的指令...",
+                alert: "收购程序已启动！"
+            },
+            fr: {
+                hero: "CENTRE DE STRATÉGIE M&A",
+                subtitle: "Bienvenue, Président Hyegong. Façonnez l'avenir de Figure AI.",
+                btn: "LANCER L'ACQUISITION",
+                stat1: "État de l'acquisition",
+                stat2: "Analyse du Marché",
+                fund: "Déploiement de Capital",
+                legal: "Approbation Légale",
+                tech: "Intégration Tech",
+                analysis: "Valeur Estimée: 2.4B€",
+                log1: "> Système prêt...",
+                log2: "> En attente des ordres du Président...",
+                alert: "Processus d'acquisition lancé !"
             }
+        };
+
+        function setLang(lang) {
+            // Update Text content
+            document.getElementById('txt-hero').innerText = langData[lang].hero;
+            document.getElementById('txt-subtitle').innerText = langData[lang].subtitle;
+            document.getElementById('txt-btn').innerText = langData[lang].btn;
+            document.getElementById('txt-stat1-title').innerText = langData[lang].stat1;
+            document.getElementById('txt-stat2-title').innerText = langData[lang].stat2;
+            document.getElementById('txt-fund').innerText = langData[lang].fund;
+            document.getElementById('txt-legal').innerText = langData[lang].legal;
+            document.getElementById('txt-tech').innerText = langData[lang].tech;
+            document.getElementById('txt-analysis').innerText = langData[lang].analysis;
+            
+            // Update Button State
+            const btns = document.querySelectorAll('.lang-switcher button');
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            addLog(`> Language changed to: ${lang.toUpperCase()}`);
         }
 
-        // 스크롤 애니메이션 효과
-        window.addEventListener('scroll', () => {
-            const boxes = document.querySelectorAll('.feature-box');
-            boxes.forEach(box => {
-                const boxTop = box.getBoundingClientRect().top;
-                if(boxTop < window.innerHeight - 100) {
-                    box.style.opacity = "1";
-                    box.style.transform = "translateY(0)";
-                }
-            });
-        });
+        function addLog(msg) {
+            const terminal = document.getElementById('log-terminal');
+            terminal.innerHTML += `<br> ${msg}`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
 
-        // 초기화 로그
-        window.onload = () => {
-            console.log("%cPHK PHONE SYSTEM ONLINE", "color: #FFD700; font-size: 25px; font-weight: bold;");
-            console.log("Welcome, 혜공 형님. 인공태양 배터리 효율 99.9%. SpaceX 위성 연결 양호.");
-        };
+        function runSimulation() {
+            const currentLang = document.querySelector('.lang-switcher button.active').innerText.toLowerCase();
+            alert(langData[currentLang].alert);
+
+            addLog("> Accessing Federal Reserve API...");
+            document.getElementById('bar1').style.width = "95%";
+            
+            setTimeout(() => {
+                addLog("> Legal documents verified by AI.");
+                document.getElementById('bar2').style.width = "85%";
+            }, 1000);
+
+            setTimeout(() => {
+                addLog("> Merging Neural Networks...");
+                document.getElementById('bar3').style.width = "70%";
+            }, 2000);
+
+            setTimeout(() => {
+                addLog("> [SUCCESS] Figure AI is now under HYEGONG CORP.");
+            }, 3500);
+        }
     </script>
 </body>
 </html>
