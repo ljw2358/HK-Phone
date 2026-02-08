@@ -1,361 +1,309 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Figure AI Acquisition Dashboard | Hyegong</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        /* CSS Variables & Reset */
-        :root {
-            --primary: #00d4ff;
-            --secondary: #0055ff;
-            --bg-body: #050505;
-            --bg-card: #111111;
-            --text-main: #ffffff;
-            --text-dim: #a0a0a0;
-            --accent: #ff0055;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHK Phone</title>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-family: 'Noto Sans KR', sans-serif;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#2b004f;
+    color:white;
+}
 
-        /* Background Animation */
-        .grid-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-        }
+header {
+    padding:20px;
+    text-align:center;
+    font-size:32px;
+    font-weight:bold;
+}
 
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background: rgba(0,0,0,0.8);
-            border-bottom: 1px solid #222;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+nav {
+    text-align:center;
+    padding:15px;
+}
 
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            color: var(--primary);
-        }
+nav button {
+    margin:5px;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:white;
+    color:#2b004f;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-        .lang-switcher button {
-            background: transparent;
-            border: 1px solid var(--text-dim);
-            color: var(--text-dim);
-            padding: 5px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 5px;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
+section {
+    padding:40px;
+    display:none;
+}
 
-        .lang-switcher button.active {
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 10px rgba(0,212,255,0.3);
-        }
+.active {
+    display:block;
+}
 
-        /* Main Dashboard */
-        .dashboard {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
+.card {
+    background:rgba(255,255,255,0.1);
+    padding:20px;
+    margin:15px 0;
+    border-radius:15px;
+}
 
-        .card {
-            background: var(--bg-card);
-            border: 1px solid #222;
-            padding: 30px;
-            border-radius: 15px;
-            position: relative;
-            transition: 0.3s;
-        }
+footer {
+    text-align:center;
+    padding:20px;
+    font-size:14px;
+    opacity:0.8;
+}
+</style>
 
-        .card:hover { border-color: var(--primary); }
-
-        .card h2 {
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-
-        /* Status Bar Animation */
-        .status-container {
-            margin-top: 15px;
-        }
-
-        .progress-bg {
-            background: #222;
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            width: 0%;
-            height: 100%;
-            transition: width 2s ease-in-out;
-        }
-
-        /* Acquisition Panel */
-        .control-panel {
-            grid-column: span 2;
-            text-align: center;
-        }
-
-        .main-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(0,212,255,0.5);
-        }
-
-        .btn-action {
-            padding: 20px 60px;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            background: var(--primary);
-            border: none;
-            color: black;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 30px;
-            transition: 0.4s;
-            box-shadow: 0 0 30px rgba(0,212,255,0.4);
-        }
-
-        .btn-action:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 0 50px rgba(0,212,255,0.7);
-        }
-
-        /* Log Terminal */
-        .terminal {
-            background: #000;
-            font-family: monospace;
-            padding: 15px;
-            height: 150px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            color: #0f0;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        footer {
-            text-align: center;
-            padding: 50px;
-            color: var(--text-dim);
-            font-size: 0.8rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .control-panel { grid-column: span 1; }
-            .main-title { font-size: 2rem; }
-        }
-    </style>
+<script>
+function showLang(lang) {
+    let sections = document.querySelectorAll("section");
+    sections.forEach(sec => sec.classList.remove("active"));
+    document.getElementById(lang).classList.add("active");
+}
+</script>
 </head>
+
 <body>
 
-    <div class="grid-bg"></div>
+<header>PHK Phone</header>
 
-    <nav>
-        <div class="logo">FIGURE-HQ</div>
-        <div class="lang-switcher" id="langBox">
-            <button onclick="setLang('ko')" class="active">KO</button>
-            <button onclick="setLang('en')">EN</button>
-            <button onclick="setLang('ja')">JA</button>
-            <button onclick="setLang('zh')">ZH</button>
-            <button onclick="setLang('fr')">FR</button>
-        </div>
-    </nav>
+<nav>
+<button onclick="showLang('en')">English</button>
+<button onclick="showLang('kr')">한국어</button>
+<button onclick="showLang('cn')">中文</button>
+<button onclick="showLang('ar')">العربية</button>
+<button onclick="showLang('es')">Español</button>
+</nav>
 
-    <main class="dashboard">
-        <section class="control-panel">
-            <h1 class="main-title" id="txt-hero">M&A STRATEGY CENTER</h1>
-            <p id="txt-subtitle">Welcome, Chairman Hyegong. Managing Figure AI's future.</p>
-            <button class="btn-action" onclick="runSimulation()" id="txt-btn">INITIATE ACQUISITION</button>
-        </section>
+<!-- English -->
+<section id="en" class="active">
 
-        <div class="card">
-            <h2 id="txt-stat1-title">Acquisition Progress</h2>
-            <div class="status-container">
-                <span id="txt-fund">Capital Deployment</span>
-                <div class="progress-bg"><div class="progress-fill" id="bar1"></div></div>
-                <span id="txt-legal">Legal Approval</span>
-                <div class="progress-bg"><div class="progress-fill" id="bar2"></div></div>
-                <span id="txt-tech">Tech Integration</span>
-                <div class="progress-bg"><div class="progress-fill" id="bar3"></div></div>
-            </div>
-        </div>
+<h1>Next Generation PHK Phone</h1>
 
-        <div class="card">
-            <h2 id="txt-stat2-title">Market Analysis</h2>
-            <p id="txt-analysis">Current Market Cap: $2.6B (Estimated)</p>
-            <div class="terminal" id="log-terminal">
-                > System ready...<br>
-                > Secure connection established...<br>
-                > Waiting for Chairman Hyegong's command...
-            </div>
-        </div>
-    </main>
+<div class="card">
+<h2>Overview</h2>
+<p>
+PHK Phone is a revolutionary global communication device powered by Artificial Sun Charging and SpaceX satellite integration.
+It enables communication anywhere on Earth including oceans, deserts, mountains, and polar regions.
+</p>
+</div>
 
-    <footer>
-        &copy; 2026 HYEGONG CORP. | POWERED BY BINI AI (GEMINI)
-    </footer>
+<div class="card">
+<h2>Key Features</h2>
+<ul>
+<li>Artificial Sun Ultra Charging</li>
+<li>SpaceX Global Satellite Network</li>
+<li>Ocean and Remote Area Connectivity</li>
+<li>AI Personal Assistant</li>
+<li>Military Grade Security</li>
+<li>Unlimited Emergency Signal</li>
+</ul>
+</div>
 
-    <script>
-        // Multi-language Data
-        const langData = {
-            ko: {
-                hero: "M&A 전략 센터",
-                subtitle: "혜공 형님, 환영합니다. Figure AI의 미래를 설계하십시오.",
-                btn: "인수 프로세스 개시",
-                stat1: "인수 진행 현황",
-                stat2: "시장 분석 데이터",
-                fund: "자본 투입률",
-                legal: "법적 승인 단계",
-                tech: "기술 통합 시뮬레이션",
-                analysis: "현재 기업 가치: 약 3.5조 원",
-                log1: "> 시스템 준비 완료...",
-                log2: "> 혜공 형님의 명령을 대기 중입니다.",
-                alert: "인수 절차가 시작되었습니다. 시장의 판도가 바뀝니다!"
-            },
-            en: {
-                hero: "M&A STRATEGY CENTER",
-                subtitle: "Welcome, Chairman Hyegong. Shape the future of Figure AI.",
-                btn: "INITIATE ACQUISITION",
-                stat1: "Acquisition Progress",
-                stat2: "Market Analysis",
-                fund: "Capital Deployment",
-                legal: "Legal Approval",
-                tech: "Tech Integration",
-                analysis: "Estimated Value: $2.6B",
-                log1: "> System ready...",
-                log2: "> Waiting for Chairman's command...",
-                alert: "Acquisition started. Changing the world!"
-            },
-            ja: {
-                hero: "M&A戦略センター",
-                subtitle: "ヘゴン兄貴、ようこそ。Figure AIの未来を設計してください。",
-                btn: "買収プロセス開始",
-                stat1: "買収進行状況",
-                stat2: "市場分析データ",
-                fund: "資本投入率",
-                legal: "法的承認段階",
-                tech: "技術統合シミュレーション",
-                analysis: "現在の企業価値：約4000億円",
-                log1: "> システム準備完了...",
-                log2: "> ヘゴン兄貴の命令を待機中...",
-                alert: "買収手続きが開始されました！"
-            },
-            zh: {
-                hero: "M&A 战略中心",
-                subtitle: "惠公兄，欢迎。请规划 Figure AI 的未来。",
-                btn: "启动收购程序",
-                stat1: "收购进展情况",
-                stat2: "市场分析数据",
-                fund: "资本投入率",
-                legal: "法律批准阶段",
-                tech: "技术整合模拟",
-                analysis: "当前估值：约 180亿 人民币",
-                log1: "> 系统就绪...",
-                log2: "> 等待惠公兄的指令...",
-                alert: "收购程序已启动！"
-            },
-            fr: {
-                hero: "CENTRE DE STRATÉGIE M&A",
-                subtitle: "Bienvenue, Président Hyegong. Façonnez l'avenir de Figure AI.",
-                btn: "LANCER L'ACQUISITION",
-                stat1: "État de l'acquisition",
-                stat2: "Analyse du Marché",
-                fund: "Déploiement de Capital",
-                legal: "Approbation Légale",
-                tech: "Intégration Tech",
-                analysis: "Valeur Estimée: 2.4B€",
-                log1: "> Système prêt...",
-                log2: "> En attente des ordres du Président...",
-                alert: "Processus d'acquisition lancé !"
-            }
-        };
+<div class="card">
+<h2>Technology Vision</h2>
+<p>
+PHK Phone represents the future of decentralized communication combining Web3 technology and next generation energy systems.
+</p>
+</div>
 
-        function setLang(lang) {
-            // Update Text content
-            document.getElementById('txt-hero').innerText = langData[lang].hero;
-            document.getElementById('txt-subtitle').innerText = langData[lang].subtitle;
-            document.getElementById('txt-btn').innerText = langData[lang].btn;
-            document.getElementById('txt-stat1-title').innerText = langData[lang].stat1;
-            document.getElementById('txt-stat2-title').innerText = langData[lang].stat2;
-            document.getElementById('txt-fund').innerText = langData[lang].fund;
-            document.getElementById('txt-legal').innerText = langData[lang].legal;
-            document.getElementById('txt-tech').innerText = langData[lang].tech;
-            document.getElementById('txt-analysis').innerText = langData[lang].analysis;
-            
-            // Update Button State
-            const btns = document.querySelectorAll('.lang-switcher button');
-            btns.forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+<div class="card">
+<h2>Specifications</h2>
+<ul>
+<li>Battery: Artificial Solar Reactor Cell</li>
+<li>Connectivity: Satellite + 6G Ready</li>
+<li>Processor: AI Quantum Mobile Chip</li>
+<li>Security: Blockchain Encryption</li>
+</ul>
+</div>
 
-            addLog(`> Language changed to: ${lang.toUpperCase()}`);
-        }
+</section>
 
-        function addLog(msg) {
-            const terminal = document.getElementById('log-terminal');
-            terminal.innerHTML += `<br> ${msg}`;
-            terminal.scrollTop = terminal.scrollHeight;
-        }
+<!-- Korean -->
+<section id="kr">
 
-        function runSimulation() {
-            const currentLang = document.querySelector('.lang-switcher button.active').innerText.toLowerCase();
-            alert(langData[currentLang].alert);
+<h1>차세대 PHK Phone</h1>
 
-            addLog("> Accessing Federal Reserve API...");
-            document.getElementById('bar1').style.width = "95%";
-            
-            setTimeout(() => {
-                addLog("> Legal documents verified by AI.");
-                document.getElementById('bar2').style.width = "85%";
-            }, 1000);
+<div class="card">
+<h2>개요</h2>
+<p>
+PHK Phone은 인공태양 충전 기술과 SpaceX 위성 네트워크를 기반으로 하는 차세대 글로벌 통신 기기입니다.
+바다, 사막, 산악, 극지 등 전 세계 어디서든 통신이 가능합니다.
+</p>
+</div>
 
-            setTimeout(() => {
-                addLog("> Merging Neural Networks...");
-                document.getElementById('bar3').style.width = "70%";
-            }, 2000);
+<div class="card">
+<h2>핵심 기능</h2>
+<ul>
+<li>인공태양 초고속 충전</li>
+<li>SpaceX 글로벌 위성망</li>
+<li>오지 및 해상 통신</li>
+<li>AI 개인 비서</li>
+<li>군사급 보안 시스템</li>
+<li>무제한 긴급 구조 신호</li>
+</ul>
+</div>
 
-            setTimeout(() => {
-                addLog("> [SUCCESS] Figure AI is now under HYEGONG CORP.");
-            }, 3500);
-        }
-    </script>
+<div class="card">
+<h2>기술 비전</h2>
+<p>
+PHK Phone은 Web3 기술과 차세대 에너지 시스템을 결합하여 탈중앙 통신의 미래를 구현합니다.
+</p>
+</div>
+
+<div class="card">
+<h2>기술 사양</h2>
+<ul>
+<li>배터리: 인공태양 리액터 셀</li>
+<li>통신: 위성 + 6G 지원</li>
+<li>프로세서: AI 양자 모바일 칩</li>
+<li>보안: 블록체인 암호화</li>
+</ul>
+</div>
+
+</section>
+
+<!-- Chinese -->
+<section id="cn">
+
+<h1>下一代 PHK 手机</h1>
+
+<div class="card">
+<h2>概述</h2>
+<p>
+PHK 手机是一款基于人造太阳充电技术和 SpaceX 卫星网络的全球通信设备。
+无论海洋、沙漠还是极地地区都可以使用。
+</p>
+</div>
+
+<div class="card">
+<h2>核心功能</h2>
+<ul>
+<li>人造太阳超级充电</li>
+<li>SpaceX 全球卫星通信</li>
+<li>偏远地区连接</li>
+<li>AI 智能助手</li>
+<li>军用级安全</li>
+<li>无限紧急求救信号</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>技术愿景</h2>
+<p>
+PHK 手机结合 Web3 与未来能源技术，打造全球去中心化通信系统。
+</p>
+</div>
+
+<div class="card">
+<h2>技术规格</h2>
+<ul>
+<li>电池: 人造太阳能源电池</li>
+<li>连接: 卫星 + 6G</li>
+<li>处理器: AI 量子芯片</li>
+<li>安全: 区块链加密</li>
+</ul>
+</div>
+
+</section>
+
+<!-- Arabic -->
+<section id="ar" dir="rtl">
+
+<h1>هاتف PHK الجيل القادم</h1>
+
+<div class="card">
+<h2>نظرة عامة</h2>
+<p>
+هاتف PHK هو جهاز اتصالات عالمي يعمل بتقنية الشحن بالشمس الصناعية وشبكة أقمار SpaceX.
+يمكن استخدامه في أي مكان في العالم.
+</p>
+</div>
+
+<div class="card">
+<h2>الميزات الأساسية</h2>
+<ul>
+<li>شحن بالطاقة الشمسية الصناعية</li>
+<li>شبكة أقمار صناعية عالمية</li>
+<li>اتصال في المناطق النائية</li>
+<li>مساعد ذكاء اصطناعي</li>
+<li>أمان عسكري</li>
+<li>إشارة طوارئ غير محدودة</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>رؤية التكنولوجيا</h2>
+<p>
+يجمع الهاتف بين Web3 وأنظمة الطاقة المستقبلية لإنشاء اتصالات لامركزية.
+</p>
+</div>
+
+<div class="card">
+<h2>المواصفات</h2>
+<ul>
+<li>البطارية: خلية طاقة شمس صناعية</li>
+<li>الاتصال: أقمار صناعية + 6G</li>
+<li>المعالج: شريحة ذكاء اصطناعي</li>
+<li>الأمان: تشفير بلوكتشين</li>
+</ul>
+</div>
+
+</section>
+
+<!-- Spanish -->
+<section id="es">
+
+<h1>PHK Phone Nueva Generación</h1>
+
+<div class="card">
+<h2>Descripción</h2>
+<p>
+PHK Phone es un dispositivo global impulsado por carga solar artificial y red satelital SpaceX.
+Permite comunicación en cualquier parte del mundo.
+</p>
+</div>
+
+<div class="card">
+<h2>Características</h2>
+<ul>
+<li>Carga con Sol Artificial</li>
+<li>Red Satelital Global</li>
+<li>Conectividad en Zonas Remotas</li>
+<li>Asistente IA</li>
+<li>Seguridad Militar</li>
+<li>Señal de Emergencia Ilimitada</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>Visión Tecnológica</h2>
+<p>
+PHK Phone combina Web3 con energía avanzada para crear comunicación descentralizada global.
+</p>
+</div>
+
+<div class="card">
+<h2>Especificaciones</h2>
+<ul>
+<li>Batería: Reactor Solar Artificial</li>
+<li>Conectividad: Satélite + 6G</li>
+<li>Procesador: Chip Cuántico IA</li>
+<li>Seguridad: Blockchain</li>
+</ul>
+</div>
+
+</section>
+
+<footer>
+© 2026 PHK Global Technology
+</footer>
+
 </body>
 </html>
